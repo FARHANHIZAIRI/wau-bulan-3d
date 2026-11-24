@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wau Warisan — 3D Viewer</title>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+<style>
+:root{color-scheme:light;--ink:#183e38;--paper:#f7f6f0;--line:#d8ddd5;--muted:#66736d}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);font-family:Inter,Arial,sans-serif;color:var(--ink)}
+.wrap{max-width:1200px;margin:auto;padding:24px}
+header{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:18px}
+.eyebrow{text-transform:uppercase;letter-spacing:.16em;font-size:11px;color:var(--muted);font-weight:700}
+h1{font-size:clamp(27px,4vw,44px);letter-spacing:-.04em;margin:8px 0}
+p{color:var(--muted);line-height:1.55;margin:0}
+.pill{border:1px solid var(--line);border-radius:999px;padding:9px 13px;font-size:12px;white-space:nowrap}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}
+button{font:inherit;cursor:pointer}
+.tab,.control{border:1px solid var(--line);background:#fff;border-radius:999px;padding:11px 16px;color:var(--ink)}
+.tab[aria-pressed=true],.control.primary{background:var(--ink);border-color:var(--ink);color:white}
+.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(250px,.8fr);gap:16px}
+.viewer{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;min-height:520px;display:flex;flex-direction:column}
+.viewer-top{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
+model-viewer{width:100%;height:460px;background:radial-gradient(ellipse at 50% 45%,#eef1e9,#fff 68%)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;padding:14px;border-top:1px solid var(--line)}
+.side{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px}
+.side h2{font-size:22px;margin:8px 0 12px;letter-spacing:-.03em}
+.side h3{font-size:13px;margin:22px 0 10px}
+.parts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.part{border:1px solid var(--line);border-radius:12px;background:#fff;text-align:left;padding:12px;color:var(--ink)}
+.part small{display:block;color:var(--muted);margin-top:4px}
+.note{font-size:12px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.status{font-size:12px;color:var(--muted);margin-top:12px;min-height:18px}
+@media(max-width:760px){.wrap{padding:16px}.layout{grid-template-columns:1fr}.viewer{min-height:0}model-viewer{height:380px}header{align-items:start;flex-direction:column}.side{padding:18px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header>
+  <div><div class="eyebrow">Digital Heritage · Interactive 3D</div><h1>Wau Warisan</h1><p>Explore four traditional wau models in a browser-based 3D viewer.</p></div>
+  <div class="pill">Rotate · Zoom · Explore</div>
+</header>
+<nav class="tabs" aria-label="Select wau model">
+  <button class="tab" data-id="bulan" aria-pressed="true">Wau Bulan</button>
+  <button class="tab" data-id="jala" aria-pressed="false">Wau Jala Budi</button>
+  <button class="tab" data-id="kucing" aria-pressed="false">Wau Kucing</button>
+  <button class="tab" data-id="seri" aria-pressed="false">Wau Seri Bulan</button>
+</nav>
+<section class="layout">
+  <div class="viewer">
+    <div class="viewer-top"><span id="model-label">WAU BULAN</span><span>3D MODEL VIEWER</span></div>
+    <model-viewer id="model" src="assets/bulan.glb" alt="Interactive 3D traditional wau model" camera-controls auto-rotate shadow-intensity="1" exposure="1" interaction-prompt="auto" ar>
+      <button slot="hotspot-head" class="hotspot" data-position="0m 0.3m 0m" data-normal="0m 1m 0m">Head</button>
+    </model-viewer>
+    <div class="controls">
+      <button class="control primary" id="rotate">Pause rotation</button>
+      <button class="control" id="reset">Reset view</button>
+      <button class="control" id="fullscreen">Full screen</button>
+    </div>
+  </div>
+  <aside class="side">
+    <div class="eyebrow">Model explorer</div><h2 id="title">Wau Bulan</h2>
+    <p id="description">Explore the shape, structure and decorative details of this traditional kite. Drag to rotate and scroll or pinch to zoom.</p>
+    <h3>Explore parts</h3>
+    <div class="parts">
+      <button class="part" data-part="kepala">Kepala<small>Head</small></button>
+      <button class="part" data-part="sayap">Sayap<small>Wings</small></button>
+      <button class="part" data-part="corak">Corak<small>Patterns</small></button>
+      <button class="part" data-part="ekor">Ekor<small>Tail</small></button>
+    </div>
+    <p class="status" id="status">Model ready. Drag to rotate.</p>
+    <p class="note">Note: part labels are informational controls. True mesh separation requires matching mesh names or a configured separation map for each GLB file.</p>
+  </aside>
+</section>
+</main>
+<style>
+.hotspot{background:#183e38;color:#fff;border:0;border-radius:20px;padding:7px 10px;font-size:12px}
+</style>
+<script>
+const models={
+ bulan:{name:"Wau Bulan",file:"assets/bulan.glb",description:"Explore the shape, structure and decorative details of Wau Bulan."},
+ jala:{name:"Wau Jala Budi",file:"assets/jala.glb",description:"Explore Wau Jala Budi and its distinctive traditional form."},
+ kucing:{name:"Wau Kucing",file:"assets/kucing.glb",description:"Explore Wau Kucing and its distinctive traditional form."},
+ seri:{name:"Wau Seri Bulan",file:"assets/seri.glb",description:"Explore Wau Seri Bulan and its distinctive traditional form."}
+};
+const viewer=document.querySelector("#model"),status=document.querySelector("#status");
+let active="bulan";
+document.querySelectorAll("[data-id]").forEach(btn=>btn.addEventListener("click",()=>{
+ active=btn.dataset.id;const m=models[active];
+ viewer.src=m.file;document.querySelector("#title").textContent=m.name;
+ document.querySelector("#model-label").textContent=m.name.toUpperCase();
+ document.querySelector("#description").textContent=m.description;
+ document.querySelectorAll("[data-id]").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)));
+ status.textContent="Loading "+m.name+"…";
+}));
+viewer.addEventListener("load",()=>status.textContent="Model loaded. Drag to rotate and zoom.");
+viewer.addEventListener("error",()=>status.textContent="Model failed to load. Check the GLB file path and file name.");
+document.querySelector("#rotate").addEventListener("click",e=>{
+ viewer.autoRotate=!viewer.autoRotate;e.currentTarget.textContent=viewer.autoRotate?"Pause rotation":"Start rotation";
+});
+document.querySelector("#reset").addEventListener("click",()=>{viewer.cameraOrbit="auto auto auto";viewer.fieldOfView="auto";status.textContent="View reset.";});
+document.querySelector("#fullscreen").addEventListener("click",()=>{if(viewer.requestFullscreen)viewer.requestFullscreen();});
+document.querySelectorAll("[data-part]").forEach(btn=>btn.addEventListener("click",()=>{
+ const labels={kepala:"Head / Kepala",sayap:"Wings / Sayap",corak:"Patterns / Corak",ekor:"Tail / Ekor"};
+ status.textContent=labels[btn.dataset.part]+" selected. Configure a model hotspot or mesh mapping to focus this part.";
+}));
+</script>
+</body>
+</html>
